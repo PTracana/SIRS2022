@@ -1,1 +1,1 @@
-ifconfig eth0 1.2.4.2/24 up
+ifconfig eth0 1.2.4.2/18 up

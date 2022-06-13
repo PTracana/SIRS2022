@@ -1,0 +1,1 @@
+ifconfig eth0 6.6.6.6/24 up
