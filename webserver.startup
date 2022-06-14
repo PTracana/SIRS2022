@@ -1,3 +1,12 @@
 ifconfig eth0 1.2.3.1/24 up
 route add default gw 1.2.3.254
-useradd -m -p admin
+/etc/init.d/ssh start
+# adduser admin
+# password
+# su - admin
+# mkdir .ssh/
+# chmod 700 .ssh/
+# cp /shared/id_rsa.pub .ssh/
+# cd .ssh/
+# mv id_rsa.pub authorized_keys
+# chmod 700 authorized_keys
