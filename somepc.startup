@@ -4,6 +4,7 @@ ip route add 5.4.3.0/24 via 6.6.6.2
 /etc/init.d/ssh start
 # adduser user
 # password
+# /etc/init.d/openbsd-inetd restart
 # ssh-keygen -t rsa
 # cp /root/.ssh/id_rsa.pub /shared/
 # ssh admin@1.2.3.1
