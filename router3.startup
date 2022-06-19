@@ -1,3 +1,60 @@
 ifconfig eth0 5.4.3.254/24 up
 ifconfig eth1 6.6.6.2/24 up
 ip route add 0.0.0.0/0 via 6.6.6.1
+
+# Ver qual e o default (Ver se de DROP ou ACCEPT por default)
+
+iptables-legacy -P INPUT DROP
+iptables-legacy -P FORWARD DROP
+iptables-legacy -P OUTPUT DROP
+iptables-legacy -A INPUT -p icmp -j ACCEPT
+iptables-legacy -A FORWARD -p icmp -j ACCEPT
+iptables-legacy -A OUTPUT -p icmp -j ACCEPT
+
+
+# netfilter/iptables [1][12][15]
+# Todos pacotes nao permitidos sao proibidos
+    
+    # Qualquer Maquina (Internet e CRYPTOTEKK):
+
+        # + Aceder ao WebServer
+iptables-legacy -A FORWARD -d 1.2.3.1 -s 6.6.6.0/24 -p tcp --dport 22 -j ACCEPT
+iptables-legacy -A FORWARD -s 1.2.3.1 -d 6.6.6.0/24 -p tcp --sport 22 -j ACCEPT
+
+iptables-legacy -A FORWARD -d 1.2.3.1 -s 6.6.6.0/24 -p tcp --dport 80 -j ACCEPT
+iptables-legacy -A FORWARD -s 1.2.3.1 -d 6.6.6.0/24 -p tcp --sport 80 -j ACCEPT
+
+
+iptables-legacy -A FORWARD -d 1.2.3.1 -s 5.4.3.0/24 -p tcp --dport 80 -j ACCEPT
+iptables-legacy -A FORWARD -s 1.2.3.1 -d 5.4.3.0/24 -p tcp --sport 80 -j ACCEPT
+
+
+        # + Enviar para MailServer
+iptables-legacy -A FORWARD -d 1.2.3.2 -s 6.6.6.0/24 -p tcp --dport 465 -j ACCEPT
+iptables-legacy -A FORWARD -s 1.2.3.2 -d 6.6.6.0/24 -p tcp --sport 465 -j ACCEPT
+
+iptables-legacy -A FORWARD -d 1.2.3.2 -s 6.6.6.0/24 -p tcp --dport 587 -j ACCEPT
+iptables-legacy -A FORWARD -s 1.2.3.2 -d 6.6.6.0/24 -p tcp --sport 587 -j ACCEPT
+
+iptables-legacy -A FORWARD -d 1.2.3.2 -s 5.4.3.0/24 -p tcp --dport 80 -j ACCEPT
+iptables-legacy -A FORWARD -s 1.2.3.2 -d 5.4.3.0/24 -p tcp --sport 80 -j ACCEPT
+
+
+    # Maquinas CRYPTOTEKK:
+
+        # Podem aceder a WebServers (SSH e HTTP) e MailServers na Internet e na Empresa (Isto está bem pensado?)
+iptables-legacy -A FORWARD -s 5.4.3.0/24 -d 6.6.6.0/24 -p tcp --sport 80 -j ACCEPT
+iptables-legacy -A FORWARD -d 5.4.3.0/24 -s 6.6.6.0/24 -p tcp --dport 80 -j ACCEPT
+
+
+        # Podem aceder ao FileServer
+iptables-legacy -A FORWARD -s 5.4.3.0/24 -d 1.2.4.55/24 -p tcp --sport 80 -j ACCEPT
+iptables-legacy -A FORWARD -d 5.4.3.0/24 -d 1.2.4.55/24 -p tcp --dport 80 -j ACCEPT
+
+    
+    # Nenhum pacote pode sair zona com IP origem diferente da gama da sub-rede (5.4.3.0/24)
+iptables-legacy -A FORWARD -s 5.4.3.0/24 -p tcp --sport 80 -j ACCEPT
+
+
+    # Nenhum pacote pode entrar com a gama da rede de destino (5.4.3.0/24)
+iptables-legacy -A FORWARD -s 5.4.3.0/24 -d 5.4.3.0/24 -p tcp --sport 80 -j DROP
